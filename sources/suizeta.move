@@ -1,25 +1,33 @@
 module suizeta::universal;
 
-use sui::balance::{Self, Balance};
+use sui::address::from_bytes;
 use sui::coin::Coin;
+use suizeta::cetusmock::{GlobalConfig, Partner, Pool, Clock, swap_a2b};
 
-public struct Vault<phantom COIN_TYPE> has key, store {
-    id: UID,
-    balance: Balance<COIN_TYPE>,
-}
-
-public entry fun on_call<COIN_TYPE>(
-    coins: Coin<COIN_TYPE>,
-    _randomValue: u64,
+public entry fun on_call<SOURCE_COIN, TARGET_COIN>(
+    in_coins: Coin<SOURCE_COIN>,
+    cetus_config: &GlobalConfig,
+    pool: &mut Pool<SOURCE_COIN, TARGET_COIN>,
+    cetus_partner: &mut Partner,
+    clock: &Clock,
+    data: vector<u8>,
     ctx: &mut TxContext,
 ) {
-    let mut vault = Vault {
-        id: object::new(ctx),
-        balance: balance::zero<COIN_TYPE>(),
-    };
+    let coins_out = swap_a2b<SOURCE_COIN, TARGET_COIN>(
+        cetus_config,
+        pool,
+        cetus_partner,
+        in_coins,
+        clock,
+        ctx,
+    );
 
-    balance::join(&mut vault.balance, coins.into_balance());
+    let receiver = decode_receiver(data);
 
-    // make the vault shared
-    transfer::share_object(vault);
+    // transfer the coins to the provided address
+    transfer::public_transfer(coins_out, receiver)
+}
+
+fun decode_receiver(data: vector<u8>): address {
+    from_bytes(data)
 }
