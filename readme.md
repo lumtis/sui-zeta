@@ -107,7 +107,7 @@ Now to make the `withdrawAndCall`, the arguments for the target contract must be
 Move to the directory:
 
 ```
-examples/call
+cd examples/call
 ```
 
 Create the encoded payload:
