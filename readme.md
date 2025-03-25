@@ -68,7 +68,7 @@ sui client call \
   --package "$PACKAGE" \
   --module cetusmock \
   --function deposit \
-  --type-args "0x2::sui::SUI" "0xb112f370bc8e3ba6e45ad1a954660099fc3e6de2a203df9d26e11aa0d870f635::token::TOKEN" \
+  --type-args "0x2::sui::SUI" "$PACKAGE::token::TOKEN" \
   --args "$POOL" "$TOKEN"
 ```
 

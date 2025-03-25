@@ -1,4 +1,4 @@
-module suizeta::universal;
+module suizeta::connected;
 
 use sui::address::from_bytes;
 use sui::coin::Coin;
